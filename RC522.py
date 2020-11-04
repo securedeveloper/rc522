@@ -37,19 +37,20 @@ def create_new_user(name, uuid):
 			print("Student could not registered, try again!")
 		
 def update_user_attendance_time(user):
-	non_reacting_time = 20 #if any activity within these many second do not update any data
 	id,uid,name,reg_time,login_at,logout_at,logged_status,last_updated = user
 	sql = ""
 	if(logged_status.lower() == "out"): #Login the user
-		sql = "UPDATE `students` SET `login_at`=now(),`logged_status`='In' WHERE `uid` = '"+uid+"' AND TIMESTAMPDIFF(SECOND,logout_at, NOW()) > "+non_reacting_time
+		logged_status = "logged in"
+		sql = "UPDATE `students` SET `login_at`=now(),`logged_status`='In' WHERE `uid` = '"+uid+"'"
 	else: #Logout the user
-		sql = "UPDATE `students` SET `logout_at`=now(),`logged_status`='Out' WHERE `uid` = '"+uid+"' AND TIMESTAMPDIFF(SECOND,login_at, NOW()) > "+non_reacting_time
-	print(sql)
+		logged_status = "logout"
+		sql = "UPDATE `students` SET `logout_at`=now(),`logged_status`='Out' WHERE `uid` = '"+uid+"'"
 	with db.cursor() as cursor:
 		cursor.execute(sql)
 	db.commit()
 	dt = datetime.datetime.now()
-	print("%s record updated successfully @ %s" % (name, logged_status, dt.strftime("%x %X")))
+	print("%s has %s successfully @ %s" % (name, logged_status, dt.strftime("%x %X")))
+	
 
 try:
 	count = 0
