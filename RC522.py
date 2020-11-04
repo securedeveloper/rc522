@@ -41,16 +41,14 @@ def update_user_attendance_time(user):
 	sql = ""
 	if(logged_status.lower() == "out"): #Login the user
 		logged_status = "logged in"
-		sql = "UPDATE `students` SET `login_at`=now(),`logged_status`='In' WHERE `uid` = '"+uid+"'"
+		sql = "UPDATE `students` SET `login_at`=now(),`logged_status`='In' WHERE `uid` = '"+uid+"' AND TIMESTAMPDIFF(SECOND, logout_at, NOW()) > 30"
 	else: #Logout the user
 		logged_status = "logout"
-		sql = "UPDATE `students` SET `logout_at`=now(),`logged_status`='Out' WHERE `uid` = '"+uid+"'"
+		sql = "UPDATE `students` SET `logout_at`=now(),`logged_status`='Out' WHERE `uid` = '"+uid+"' AND TIMESTAMPDIFF(SECOND, login_at, NOW()) > 30"
 	with db.cursor() as cursor:
 		cursor.execute(sql)
 	db.commit()
-	dt = datetime.datetime.now()
-	print("%s has %s successfully @ %s" % (name, logged_status, dt.strftime("%x %X")))
-	
+	print("%s update applied", uid)
 
 try:
 	count = 0
